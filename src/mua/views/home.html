@@ -1,0 +1,32 @@
+
+{{template "header"}}
+        <title>首页 - MUA 表情</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                {{template "navbar" .}}
+            </div>
+        </nav>
+
+        <div class="container">
+            {{range $tag, $emotions := .emotionDict}}
+            <div class="row">
+                <h1>{{$tag}}</h1>
+                {{range $emotions}}
+                <div class="col-xs-6 col-md-2">
+                    <img class="img-rounded" width="150" height="150" src="/emotions/{{.Name}}" alt="{{.Name}}">
+                </div>
+                {{end}}
+            </div>
+            {{end}}
+
+        </div>
+
+        <script src="http://cdn.staticfile.org/masonry/3.1.5/masonry.pkgd.min.js"></script>
+        <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    </body>
+
+</html>
+

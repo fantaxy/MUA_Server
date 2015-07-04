@@ -1,0 +1,54 @@
+ {{template "header"}}
+    	<title>上传 - Mua 表情</title>
+  	</head>
+			<div class="container">
+				{{template "navbar" .}}
+			</div>	
+		</div>
+		
+		<div class="container">
+			<h1>上传表情</h1>
+			<form method="post" action="/my" enctype="multipart/form-data">
+
+				<div class="form-group">
+					<label>表情文件：</label>
+					<input type="file" class="form-control" name="image">
+				</div>
+				<div class="form-group">
+					<label>标签：</label>
+					<input type="text" class="form-control" name="tags">
+				</div>
+				<button type="submit" class="btn btn-default">上传表情</button>
+			</form>
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>表情</th>
+						<th>上传时间</th>
+						<th>下载数</th>
+						<th>标签</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{range .Emotions}}
+					<tr>
+						<th><img src="/emotions/{{.Name}}" alt="{{.Name}}"></th>
+						<th>{{.UploadTime}}</th>
+						<th>{{.Downloads}}</th>
+						<th>{{.Tags}}</th>
+						<th>
+							<a href="/my/modify?eid={{.Id}}">修改</a>
+							<a href="/my/delete?eid={{.Id}}">删除</a>
+						</th>
+					</tr>
+					{{end}}
+				</tbody>
+			</table>
+		</div>
+
+		<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>
