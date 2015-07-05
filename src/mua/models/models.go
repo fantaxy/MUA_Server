@@ -98,15 +98,16 @@ func GetAllSeries() (dict map[string][]*Emotion, err error) {
 	qs.All(&tags)
 
 	for i := range tags {
-		tag := tags[i].Name
-		emotions, err := GetAllEmotions("", tag, false)
-		if err != nil {
+		tagName := tags[i].Name
+		emotions, err := GetAllEmotions("", tagName, false)
+		// beego.Debug("tag: ", tagName, " emotions: ", emotions)
+		if err != nil || len(emotions) == 0 {
 			continue
 		}
-		if dict[tag] == nil {
-			dict[tag] = emotions
+		if dict[tagName] == nil {
+			dict[tagName] = emotions
 		} else {
-			dict[tag] = append(dict[tag], emotions...)
+			dict[tagName] = append(dict[tagName], emotions...)
 		}
 	}
 	return dict, err
@@ -138,6 +139,19 @@ func GetAllEmotions(uploader string, tag string, isDesc bool) (emotions []*Emoti
 	return emotions, err
 }
 
+func GetEmotion(id string) (Emotion, error) {
+	o := orm.NewOrm()
+
+	eid, err := strconv.ParseInt(id, 10, 64)
+	emotion := Emotion{Id: eid}
+
+	err = o.Read(&emotion)
+	emotion.Tags = strings.Replace(strings.Replace(
+		emotion.Tags, "$", " ", -1), "^", "", -1)
+
+	return emotion, err
+}
+
 func CheckDuplicate(name string) bool {
 	o := orm.NewOrm()
 
@@ -163,5 +177,23 @@ func DeleteEmotion(id string) error {
 
 	emotion := &Emotion{Id: eid}
 	_, err = o.Delete(emotion)
+	return err
+}
+
+func ModifyEmotion(id, uname, tags string) error {
+	eid, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	o := orm.NewOrm()
+
+	escapedTags := "^" + strings.Join(strings.Split(tags, " "), "$^") + "$"
+	emotion := &Emotion{Id: eid, Tags: escapedTags}
+	_, err = o.Update(emotion, "Tags")
+	if err == nil {
+		err = AddTags(uname, tags)
+	}
+
 	return err
 }

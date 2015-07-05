@@ -1,9 +1,11 @@
  {{template "header"}}
     	<title>上传 - Mua 表情</title>
   	</head>
-			<div class="container">
-				{{template "navbar" .}}
-			</div>	
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                {{template "navbar" .}}
+            </div>
+        </nav>
 		</div>
 		
 		<div class="container">
@@ -34,7 +36,7 @@
 				<tbody>
 					{{range .Emotions}}
 					<tr>
-						<th><img src="/emotions/{{.Name}}" alt="{{.Name}}"></th>
+						<th><img class="img-rounded" width="150" height="150" src="/emotions/{{.Name}}" alt="{{.Name}}"></th>
 						<th>{{.UploadTime}}</th>
 						<th>{{.Downloads}}</th>
 						<th>{{.Tags}}</th>

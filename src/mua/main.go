@@ -20,6 +20,7 @@ func main() {
 	beego.Router("/login", &controllers.LoginController{})
 	beego.Router("/my", &controllers.MyEmotionController{})
 	beego.Router("/my/delete", &controllers.MyEmotionController{}, "get:Delete")
+	beego.Router("/my/modify", &controllers.MyEmotionController{}, "get:Modify")
 	beego.Router("/data/all", &controllers.DataController{}, "get:All")
 
 	// 附件处理

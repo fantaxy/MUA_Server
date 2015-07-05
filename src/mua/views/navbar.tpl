@@ -4,7 +4,7 @@
 <div>
 	<ul class="nav navbar-nav">
 	    <li {{if .IsHome}}class="active"{{end}}><a href="/">首页</a></li>
-	    <li {{if .IsMy}}class="active"{{end}}><a href="/my">我的表情</a></li>
+	    <li {{if .IsMy}}class="active"{{end}}><a href="/my">上传表情</a></li>
 	</ul>
 </div>
 

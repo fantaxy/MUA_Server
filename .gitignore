@@ -7,6 +7,8 @@
 _obj
 _test
 
+*.db
+
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
@@ -22,3 +24,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+bin/
+pkg/
+src/mua/emotions/
+src/mua/data/
+
