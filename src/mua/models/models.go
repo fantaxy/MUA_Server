@@ -33,9 +33,10 @@ type Series struct {
 }
 
 type Tag struct {
-	Id        int64
-	Name      string `orm:"index;unique"`
-	CreatedBy string
+	Id         int64
+	Name       string `orm:"index;unique"`
+	CreatedBy  string
+	CreateTime time.Time `orm:"index"`
 }
 
 const (
@@ -84,6 +85,7 @@ func AddTags(uploader string, tags string) error {
 		tag := &Tag{
 			Name:      v,
 			CreatedBy: uploader,
+			CreateTime:time.Now()
 		}
 		_, err = o.Insert(tag)
 	}
@@ -95,6 +97,7 @@ func GetAllSeries() (dict map[string][]*Emotion, err error) {
 	tags := make([]*Tag, 0)
 	o := orm.NewOrm()
 	qs := o.QueryTable("tag")
+	qs.OrderBy("-profile__age", "profile")
 	qs.All(&tags)
 
 	for i := range tags {
