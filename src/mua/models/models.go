@@ -83,9 +83,9 @@ func AddTags(uploader string, tags string) error {
 	var err error
 	for _, v := range strings.Split(tags, " ") {
 		tag := &Tag{
-			Name:      v,
-			CreatedBy: uploader,
-			CreateTime:time.Now()
+			Name:       v,
+			CreatedBy:  uploader,
+			CreateTime: time.Now(),
 		}
 		_, err = o.Insert(tag)
 	}
