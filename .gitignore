@@ -33,4 +33,5 @@ src/beeblog/
 src/github.com/
 
 .DS_Store
+src/mua/nohup.out
 
