@@ -4,9 +4,10 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/astaxie/beego"
+	"io"
 	"mua/models"
-	// "os"
-	"path"
+	"net/http"
+	"os"
 )
 
 type MyEmotionController struct {
@@ -39,43 +40,60 @@ func (this *MyEmotionController) Post() {
 	tags := this.Input().Get("tags")
 	eid := this.Input().Get("eid")
 	uname := currentUser(this.Ctx)
+	w := this.Ctx.ResponseWriter
 
 	if len(eid) == 0 {
 		//上传表情
-		f, fh, err := this.GetFile("image")
+		files, err := this.GetFiles("image")
 		if err != nil {
-			beego.Error(err)
+			http.Error(w, err.Error(), http.StatusNoContent)
 			this.Redirect("/my", 302)
 			return
 		}
+		for i, _ := range files {
+			fh := files[i]
+			f, err := fh.Open()
+			defer f.Close()
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			//读取前500字节生成MD5
+			b := make([]byte, 500)
+			f.Read(b)
+			f.Seek(0, 0)
 
-		//读取前500字节生成MD5
-		b := make([]byte, 500)
-		f.Read(b)
-		defer f.Close()
+			var image string
+			var md5Name string
+			if fh != nil {
+				image = fh.Filename
+				beego.Info(image)
+				md5Name = fmt.Sprintf("%x", md5.Sum(b))
+				beego.Info(md5Name)
+			}
+			//查重
+			if models.CheckDuplicate(md5Name) {
+				this.Redirect("/my", 302)
+				beego.Warning("Duplicate image: " + image)
+				return
+			}
+			//保存到文件
+			//create destination file making sure the path is writeable.
+			dst, err := os.Create("emotions/" + md5Name)
+			defer dst.Close()
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			//copy the uploaded file to the destination file
+			if _, err := io.Copy(dst, f); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 
-		var image string
-		var md5Name string
-		if fh != nil {
-			image = fh.Filename
-			beego.Info(image)
-			md5Name = fmt.Sprintf("%x", md5.Sum(b))
-			beego.Info(md5Name)
+			//保存到数据库
+			err = models.AddEmotion(md5Name, uname, tags)
 		}
-		//查重
-		if models.CheckDuplicate(md5Name) {
-			this.Redirect("/my", 302)
-			beego.Warning("Duplicate image: " + image)
-			return
-		}
-		//保存到文件
-		err = this.SaveToFile("image", path.Join("emotions", md5Name))
-		if err != nil {
-			beego.Error(err)
-		}
-
-		//保存到数据库
-		err = models.AddEmotion(md5Name, uname, tags)
 	} else {
 		//修改表情
 		err := models.ModifyEmotion(eid, uname, tags)

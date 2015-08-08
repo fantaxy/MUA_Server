@@ -29,4 +29,8 @@ bin/
 pkg/
 src/mua/emotions/
 src/mua/data/
+src/beeblog/
+src/github.com/
+
+.DS_Store
 
