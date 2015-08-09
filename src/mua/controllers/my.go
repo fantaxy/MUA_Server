@@ -75,7 +75,7 @@ func (this *MyEmotionController) Post() {
 			if models.CheckDuplicate(md5Name) {
 				this.Redirect("/my", 302)
 				beego.Warning("Duplicate image: " + image)
-				return
+				continue
 			}
 			//保存到文件
 			//create destination file making sure the path is writeable.

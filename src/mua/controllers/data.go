@@ -11,7 +11,7 @@ type DataController struct {
 }
 
 func (this *DataController) All() {
-	emotions, err := models.GetAllEmotions("", "", false)
+	emotions, err := models.GetAllEmotions("", "", true)
 	if err != nil {
 		beego.Info(err)
 		return

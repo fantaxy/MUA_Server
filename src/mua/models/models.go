@@ -97,7 +97,7 @@ func GetAllSeries() (dict map[string][]*Emotion, err error) {
 	tags := make([]*Tag, 0)
 	o := orm.NewOrm()
 	qs := o.QueryTable("tag")
-	qs.OrderBy("-profile__age", "profile")
+	qs.OrderBy("-create_time")
 	qs.All(&tags)
 
 	for i := range tags {
